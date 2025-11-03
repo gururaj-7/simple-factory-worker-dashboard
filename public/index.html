@@ -15,9 +15,9 @@
 
     body {
       background: #f3f6fc;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
@@ -45,33 +45,29 @@
       border-radius: 14px;
       padding: 40px 50px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
     .add-section h2 {
       color: #007bff;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
       font-size: 24px;
+      text-align: center;
     }
 
     form {
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       flex-wrap: wrap;
       gap: 25px;
-      width: 100%;
-      max-width: 1100px;
     }
 
     .form-group {
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 300px;
       flex: 1;
-      min-width: 280px;
     }
 
     label {
@@ -82,23 +78,22 @@
 
     input {
       flex: 1;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 8px;
       border: 1px solid #ccc;
-      font-size: 16px;
+      font-size: 15px;
       transition: 0.3s;
     }
 
     input:focus {
       border-color: #007bff;
-      box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+      box-shadow: 0 0 6px rgba(0, 123, 255, 0.2);
       outline: none;
     }
 
     .btn-container {
       width: 100%;
-      display: flex;
-      justify-content: center;
+      text-align: center;
       margin-top: 25px;
     }
 
@@ -199,13 +194,10 @@
       background: #007bff;
       color: white;
       font-size: 14px;
+      margin-top: auto;
     }
 
     @media (max-width: 768px) {
-      main {
-        padding: 20px;
-      }
-
       form {
         flex-direction: column;
         gap: 15px;
@@ -226,13 +218,13 @@
       <h2>Add New Worker</h2>
       <form id="workerForm">
         <div class="form-group">
-          <label for="name">Worker Name:</label>
+          <label for="name">Name:</label>
           <input type="text" id="name" placeholder="Enter worker name" required />
         </div>
 
         <div class="form-group">
           <label for="salary">Daily Salary (₹):</label>
-          <input type="number" id="salary" placeholder="Enter daily salary" required />
+          <input type="number" id="salary" placeholder="Enter salary" required />
         </div>
 
         <div class="form-group">
@@ -269,65 +261,65 @@
   <footer>© 2025 Factory Management Dashboard</footer>
 
   <script>
-  const form = document.getElementById('workerForm');
-  const workerBody = document.getElementById('workerBody');
-  const totalSalaryDiv = document.getElementById('totalSalary');
+    const form = document.getElementById('workerForm');
+    const workerBody = document.getElementById('workerBody');
+    const totalSalaryDiv = document.getElementById('totalSalary');
 
-  async function fetchWorkers() {
-    const res = await fetch('/api/workers');
-    const workers = await res.json();
-    displayWorkers(workers);
-  }
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = document.getElementById('name').value.trim();
-    const salary = parseFloat(document.getElementById('salary').value.trim());
-    const age = parseInt(document.getElementById('age').value.trim());
-    if (!name || !salary || !age) return;
-
-    await fetch('/api/workers', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, salary, age })
-    });
-
-    form.reset();
-    fetchWorkers();
-  });
-
-  async function deleteWorker(id) {
-    await fetch('/api/workers/' + id, { method: 'DELETE' });
-    fetchWorkers();
-  }
-
-  function displayWorkers(workers) {
-    workerBody.innerHTML = '';
-    if (workers.length === 0) {
-      workerBody.innerHTML = '<tr><td colspan="4" class="no-data">No workers added yet</td></tr>';
-      totalSalaryDiv.textContent = "Total Daily Wages: ₹0";
-      return;
+    async function fetchWorkers() {
+      const res = await fetch('/api/workers');
+      const workers = await res.json();
+      displayWorkers(workers);
     }
 
-    let totalSalary = 0;
-    workers.forEach(worker => {
-      const salary = Number(worker.salary) || 0;
-      totalSalary += salary;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const salary = parseFloat(document.getElementById('salary').value.trim());
+      const age = parseInt(document.getElementById('age').value.trim());
+      if (!name || !salary || !age) return;
 
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${worker.name}</td>
-        <td>₹${salary.toLocaleString()}</td>
-        <td>${worker.age}</td>
-        <td><button onclick="deleteWorker(${worker.id})">Delete</button></td>
-      `;
-      workerBody.appendChild(row);
+      await fetch('/api/workers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, salary, age })
+      });
+
+      form.reset();
+      fetchWorkers();
     });
 
-    totalSalaryDiv.textContent = `Total Daily Wages: ₹${totalSalary.toLocaleString()}`;
-  }
+    async function deleteWorker(id) {
+      await fetch(`/api/workers/${id}` , { method: 'DELETE' });
+      fetchWorkers();
+    }
 
-  fetchWorkers();
+    function displayWorkers(workers) {
+      workerBody.innerHTML = '';
+      if (workers.length === 0) {
+        workerBody.innerHTML = '<tr><td colspan="4" class="no-data">No workers added yet</td></tr>';
+        totalSalaryDiv.textContent = "Total Daily Wages: ₹0";
+        return;
+      }
+
+      let totalSalary = 0;
+      workers.forEach(worker => {
+        const salary = Number(worker.salary) || 0;
+        totalSalary += salary;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${worker.name}</td>
+          <td>₹${salary.toLocaleString()}</td>
+          <td>${worker.age}</td>
+          <td><button onclick="deleteWorker('${worker._id}')">Delete</button></td>
+        `;
+        workerBody.appendChild(row);
+      });
+
+      totalSalaryDiv.textContent = `Total Daily Wages: ₹${totalSalary.toLocaleString()}`;
+    }
+
+    fetchWorkers();
   </script>
 </body>
 </html>
