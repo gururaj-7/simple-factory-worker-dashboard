@@ -71,7 +71,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // ===== MONGODB CONNECTION =====
 mongoose
-  .connect("mongodb+srv://admin:Rocky123@cluster0.h1hbjic.mongodb.net/factory?retryWrites=true&w=majority")
+  .connect(process.env.MONGO_URL)
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
